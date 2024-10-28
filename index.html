@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Number - Game</title>
+
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+GB+S:wght@100;400&display=swap" rel="stylesheet">
+
+    <style>
+        
+        body {
+            background: radial-gradient(circle, #e8eaf6, #d1c4e9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Playwrite GB S', sans-serif;
+            overflow: hidden;
+        }
+
+        
+        .game-container {
+            background: linear-gradient(145deg, #ede7f6, #d1c4e9);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            text-align: center;
+            padding: 40px;
+            width: 400px;
+            border: 3px solid #b39ddb;
+            color: #512da8;
+            animation: pulse 2s infinite;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 20px;
+            color: #9575cd;
+            animation: bounce 1.5s infinite alternate;
+        }
+
+        input {
+            width: 85%;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border: 2px solid #b39ddb;
+            font-size: 1.2rem;
+            font-family: 'Playwrite GB S', sans-serif;
+            outline: none;
+            background-color: #f3e5f5;
+        }
+
+        button {
+            width: 90%;
+            padding: 12px;
+            background-color: #7e57c2;
+            color: white;
+            font-size: 1.2rem;
+            font-family: 'Playwrite GB S', sans-serif;
+             
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #9575cd;
+            transform: scale(1.05);
+        }
+
+        p {
+            font-size: 1.4rem;
+            margin: 8px 0;
+            color: #673ab7;
+        }
+
+        #result {
+            font-weight: bold;
+        }
+
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #d1c4e9;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            color: #512da8;
+            animation: popUp 0.5s ease;
+        }
+
+        .modal-content h2 {
+            margin: 0 0 10px;
+            font-size: 2rem;
+            color: #9575cd;
+        }
+
+        .modal-content button {
+            background-color: #7e57c2;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            color: white;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .modal-content button:hover {
+            background-color: #9575cd;
+        }
+
+        
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>Guess the Number</h1>
+        <input id="guessnumber" type="number" min="1" max="10" placeholder="Enter a number (1-10)">
+        <button onclick="check()">Check</button>
+        <p id="result">You are Right/Wrong</p>
+        <p id="score">Score: 10</p>
+        <button onclick="confirmRestart()">Restart Game</button>
+    </div>
+
+    <div class="modal" id="alertModal">
+        <div class="modal-content">
+            <h2 id="alertMessage">YOU WON!</h2>
+            <button onclick="closeModal()">OK</button>
+        </div>
+    </div>
+
+    <div class="modal" id="restartModal">
+        <div class="modal-content">
+            <h2>Restart the Game?</h2>
+            <button onclick="restartGame()">Yes</button>
+            <button onclick="closeModal()">No</button>
+        </div>
+    </div>
+
+    <script>
+        var guessnumber = document.getElementById("guessnumber");
+        var result = document.getElementById("result");
+        var score = document.getElementById("score");
+        var randomnumber = Math.floor(Math.random() * 10) + 1;
+        var totalscore = 10;
+
+        function check() {
+            var enterednumber = parseInt(guessnumber.value);
+
+            if (randomnumber === enterednumber) {
+                result.textContent = "Right! 🎉";
+                result.className = "right";
+                showModal("YOU WON!");
+            } else {
+                totalscore--;
+                score.textContent = "Score: " + totalscore;
+                result.textContent = "Wrong 😢";
+                result.className = "wrong";
+
+                if (totalscore === 0) {
+                    showModal("Game Over! The correct number was " + randomnumber);
+                    resetGame();
+                }
+            }
+        }
+
+        function confirmRestart() {
+            document.getElementById("restartModal").style.display = "flex";
+        }
+
+        function restartGame() {
+            closeModal();
+            resetGame();
+        }
+
+        function resetGame() {
+            randomnumber = Math.floor(Math.random() * 10) + 1;
+            totalscore = 10;
+            score.textContent = "Score: " + totalscore;
+            result.textContent = "You are Right/Wrong";
+            guessnumber.value = "";
+        }
+
+        function showModal(message) {
+            document.getElementById("alertMessage").textContent = message;
+            document.getElementById("alertModal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("alertModal").style.display = "none";
+            document.getElementById("restartModal").style.display = "none";
+        }
+    </script>
+
+</body>
+</html>
